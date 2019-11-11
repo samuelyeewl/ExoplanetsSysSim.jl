@@ -10,11 +10,13 @@
     star::StarT
     planet::Vector{Planet}
     orbit::Vector{Orbit}
+    sys_incl::Float64      # System plane relative to observer line of sight
+    high_incl::Bool        # Whether system is part of high inclination dispersion population
 
       # TODO DETAIL: Setup inner constructor to enforce equal number of planets & orbits
-      function PlanetarySystem{StarT}(s::StarT, p::AbstractVector{Planet}, o::AbstractVector{Orbit}) where {StarT<:StarAbstract}
+      function PlanetarySystem{StarT}(s::StarT, p::AbstractVector{Planet}, o::AbstractVector{Orbit}, sys_incl::Float64=0.0, high_incl::Bool=false) where {StarT<:StarAbstract}
         @assert(length(p)==length(o)) # else error(string("Number of planets must match number of orbits: Np= ",length(p)," No= ",length(o)))
-        new(s,p,o)
+        new(s,p,o,sys_incl,high_incl)
       end
   end
 
@@ -26,12 +28,12 @@ function PlanetarySystem(s::StarT) where {StarT<:StarAbstract}
      PlanetarySystem(s,Vector{Planet}(undef,0),Vector{Orbit}(undef,0))  # Constructor for a Planetary System with no planets
 end
 
-function PlanetarySystem(s::StarT, p::Planet, o::Orbit) where {StarT<:StarAbstract}
-   PlanetarySystem(s,[p],[o])  # Constructor for a single Planet System
+function PlanetarySystem(s::StarT, p::Planet, o::Orbit, sys_incl::Float64=0.0, high_incl::Bool=false) where {StarT<:StarAbstract}
+   PlanetarySystem(s,[p],[o],sys_incl,high_incl)  # Constructor for a single Planet System
 end
 
-function PlanetarySystem(s::StarT, p::AbstractVector{Planet}, o::AbstractVector{Orbit}) where {StarT<:StarAbstract}
-   PlanetarySystem{StarT}(s,p,o)  # Constructor for a single Planet System
+function PlanetarySystem(s::StarT, p::AbstractVector{Planet}, o::AbstractVector{Orbit}, sys_incl::Float64=0.0, high_incl::Bool=false) where {StarT<:StarAbstract}
+   PlanetarySystem{StarT}(s,p,o,sys_incl,high_incl)  # Constructor for a single Planet System
 end
 
 function PlanetarySystem(ps::PlanetarySystem{StarT}, keep::AbstractVector{Int64})  where {StarT<:StarAbstract} # Why doesn't this work?
